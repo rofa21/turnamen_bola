@@ -1,3 +1,10 @@
+# ============================================================
+# Laravel .htaccess - Optimized for RumahWeb cPanel Hosting
+# ============================================================
+
+# Force PHP 8.3+ on RumahWeb shared hosting (jika diperlukan)
+# AddHandler application/x-httpd-php83 .php
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -23,3 +30,19 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# ============================================================
+# Security Headers
+# ============================================================
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Protect sensitive files
+<FilesMatch "^\.env|composer\.(json|lock)|package(-lock)?\.json|artisan$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
