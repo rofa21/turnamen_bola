@@ -19,9 +19,24 @@ class AdminPrintController extends Controller
 
         $team = null;
         if ($selectedTeamId) {
-            $team = Team::with(['operator', 'ageCategory', 'players.verification', 'players.documents'])->find($selectedTeamId);
+            // ONLY LOAD APPROVED / AUTO_APPROVED PLAYERS FOR PRINTING
+            $team = Team::with(['operator', 'ageCategory', 'players' => function ($query) {
+                $query->whereHas('verification', function ($vq) {
+                    $vq->whereIn('status', ['approved', 'auto_approved']);
+                })->with(['verification', 'documents']);
+            }])->find($selectedTeamId);
         }
 
-        return view('admin.print.index', compact('teams', 'team', 'selectedTeamId', 'documentType', 'event'));
+        // Optional signature details for printing
+        $signature = [
+            'location'    => $request->input('sign_location', 'Kebumen'),
+            'date'        => $request->input('sign_date', date('d F Y')),
+            'name_left'   => $request->input('sign_name_left', $team?->manager_name ?? 'Manajer SSB'),
+            'title_left'  => $request->input('sign_title_left', 'Manajer SSB / Pendamping'),
+            'name_right'  => $request->input('sign_name_right', 'Drs. H. Slamet, M.Pd'),
+            'title_right' => $request->input('sign_title_right', 'Ketua Panitia Pusat Disdikpora'),
+        ];
+
+        return view('admin.print.index', compact('teams', 'team', 'selectedTeamId', 'documentType', 'event', 'signature'));
     }
 }

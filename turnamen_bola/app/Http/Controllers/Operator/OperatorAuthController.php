@@ -25,18 +25,33 @@ class OperatorAuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $operator = Operator::where('username', $credentials['username'])->first();
+        $input = trim($credentials['username']);
 
-        if ($operator && Hash::check($credentials['password'], $operator->password)) {
-            if ($operator->status !== 'active') {
-                return back()->withErrors(['username' => 'Akun Operator Anda tidak aktif. Silakan hubungi Panitia Pusat.']);
+        $operator = Operator::where('username', $input)
+            ->orWhere('email', $input)
+            ->orWhere('name', 'like', "%{$input}%")
+            ->first();
+
+        if ($operator) {
+            $isPasswordValid = Hash::check($credentials['password'], $operator->password) || $operator->password === $credentials['password'];
+
+            if ($isPasswordValid) {
+                if ($operator->password === $credentials['password']) {
+                    $operator->password = Hash::make($credentials['password']);
+                }
+
+                if ($operator->status !== 'active') {
+                    return back()->withErrors(['username' => 'Akun Operator Anda tidak aktif. Silakan hubungi Panitia Pusat.']);
+                }
+
+                $operator->last_login_at = now();
+                $operator->save();
+
+                $request->session()->put('operator_id', $operator->id);
+                $request->session()->regenerate();
+
+                return redirect()->route('operator.dashboard');
             }
-
-            $operator->update(['last_login_at' => now()]);
-            $request->session()->put('operator_id', $operator->id);
-            $request->session()->regenerate();
-
-            return redirect()->route('operator.dashboard');
         }
 
         return back()->withErrors([

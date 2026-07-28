@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('player_documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
-            $table->enum('type', ['akta', 'kk', 'kia', 'foto']); // jenis dokumen
+            $table->string('type'); // jenis dokumen: akta, kk, kia, foto, ijazah, nisn, raport
             $table->string('file_path');
             $table->string('original_name')->nullable();
             $table->timestamps();

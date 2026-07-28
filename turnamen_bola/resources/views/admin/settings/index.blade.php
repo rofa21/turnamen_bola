@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengaturan Event & Master Data - Panitia Pusat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
         .sidebar { min-height: 100vh; background-color: #212529; color: #fff; z-index: 100; }
@@ -20,7 +20,7 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <i class="bi bi-trophy-fill text-warning fs-3"></i>
+                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
                 <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
             </div>
@@ -162,27 +162,29 @@
                 <!-- 3. BACKUP DATABASE -->
                 <div class="col-12">
                     <div class="card border-0 shadow-sm p-4">
-                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-database-fill-gear text-warning me-2"></i> Cadangan & Pemulihan Basis Data (Backup Database)</h5>
-                        <p class="text-muted mb-4">Amankan seluruh data sistem (data tim, verifikasi berkas pemain, akun operator, hingga jadwal pertandingan) secara berkala.</p>
-                        
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-database-fill-gear text-success me-2"></i> Cadangan & Pemulihan Lengkap (Database + Foto/Dokumen)</h5>
+                        <div class="alert alert-success border-start border-success border-4 mb-3 small">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>Backup Lengkap:</strong> File backup berupa <code>.zip</code> yang memuat <code>database.sqlite</code> (semua data sistem) <strong>SEKALIGUS</strong> seluruh berkas foto & dokumen pemain yang telah diunggah. Cukup simpan satu file ZIP untuk backup menyeluruh.
+                        </div>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="p-3 border rounded bg-light d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="fw-bold mb-1"><i class="bi bi-cloud-arrow-down-fill text-primary me-2"></i> Unduh Cadangan Database</h6>
-                                        <small class="text-muted">Unduh file backup SQLite (.sqlite / .sql) dari server saat ini.</small>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-file-zip-fill text-primary me-2"></i> Unduh Backup Lengkap (.zip)</h6>
+                                        <small class="text-muted">Zip berisi: SQLite database + semua foto & dokumen pemain yang terunggah.</small>
                                     </div>
-                                    <a href="{{ route('admin.settings.backup') }}" class="btn btn-primary btn-sm"><i class="bi bi-download me-1"></i> Backup Database</a>
+                                    <a href="{{ route('admin.settings.backup') }}" class="btn btn-primary btn-sm shadow-sm"><i class="bi bi-download me-1"></i> Download ZIP</a>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="p-3 border rounded bg-light d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="fw-bold mb-1"><i class="bi bi-file-earmark-arrow-up-fill text-danger me-2"></i> Import Database (.sql / .sqlite)</h6>
-                                        <small class="text-muted">Upload file cadangan database untuk di-import ke sistem.</small>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-file-earmark-arrow-up-fill text-danger me-2"></i> Pulihkan Dari Cadangan (.zip / .sqlite)</h6>
+                                        <small class="text-muted">Upload file cadangan ZIP atau SQLite untuk memulihkan sistem secara menyeluruh.</small>
                                     </div>
                                     <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalRestoreDatabase">
-                                        <i class="bi bi-upload me-1"></i> Import Database
+                                        <i class="bi bi-upload me-1"></i> Pulihkan
                                     </button>
                                 </div>
                             </div>
@@ -208,11 +210,12 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="alert alert-warning small mb-3">
-                        <strong>Informasi:</strong> Pilih file database (`.sql`, `.sqlite`, `.db`) yang ingin Anda import ke dalam sistem.
+                        <strong><i class="bi bi-exclamation-triangle-fill me-1"></i> Peringatan:</strong> Proses pemulihan akan <u>menimpa data sistem saat ini</u>. Pastikan file backup valid sebelum melanjutkan.
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">Pilih File Database yang Di-import (.sql / .sqlite / .db)</label>
-                        <input type="file" name="backup_file" class="form-control" accept=".sql,.sqlite,.db,.txt" required>
+                        <label class="form-label fw-bold small">Pilih File Cadangan (.zip / .sqlite / .sql)</label>
+                        <input type="file" name="backup_file" class="form-control" accept=".zip,.sql,.sqlite,.db,.txt" required>
+                        <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i> Direkomendasikan: File <code>.zip</code> hasil backup lengkap (database + dokumen/foto).</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -300,6 +303,7 @@
     </div>
 @endforeach
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

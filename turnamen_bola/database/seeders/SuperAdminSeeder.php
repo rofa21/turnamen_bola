@@ -15,7 +15,7 @@ class SuperAdminSeeder extends Seeder
             [
                 'name' => 'Super Admin Disdikpora',
                 'email' => 'admin@disdikpora.id',
-                'password' => 'admin123',
+                'password' => Hash::make('admin123'),
                 'role' => 'super_admin',
             ]
         );
@@ -25,7 +25,7 @@ class SuperAdminSeeder extends Seeder
             [
                 'name' => 'admin',
                 'email' => 'admin@admin.com',
-                'password' => 'admin123',
+                'password' => Hash::make('admin123'),
                 'role' => 'super_admin',
             ]
         );

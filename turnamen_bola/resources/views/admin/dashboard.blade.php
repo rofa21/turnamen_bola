@@ -15,6 +15,27 @@
         .stat-card { border: none; border-radius: 10px; transition: transform 0.2s; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
         .stat-card:hover { transform: translateY(-3px); }
         .chart-container { position: relative; height: 260px; width: 100%; }
+        .top-banner {
+            width: 100%;
+            aspect-ratio: 1024 / 341;
+            background: url('/images/banner-turnamen.jpg') center center / cover no-repeat;
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+            border: 2px solid #d4a017;
+        }
+        .top-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.4) 65%, transparent 100%);
+        }
+        .top-banner .content { position: relative; z-index: 1; }
     </style>
 </head>
 <body>
@@ -24,8 +45,8 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <i class="bi bi-trophy-fill text-warning fs-3"></i>
-                <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
+                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:52px;height:52px;object-fit:cover;">
+                <h6 class="text-white fw-bold mt-1 mb-0">PANITIA PUSAT</h6>
                 <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
             </div>
             <ul class="nav flex-column">
@@ -57,6 +78,18 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
+
+            <!-- TOP HEADER BANNER -->
+            <div class="top-banner shadow-sm">
+                <div class="content">
+                    <h4 class="text-white fw-bold mb-1">
+                        PANITIA PUSAT — <span class="text-warning">PIALA DISDIKPORA KEBUMEN</span>
+                    </h4>
+                    <p class="text-light mb-0 small">
+                        <i class="bi bi-shield-check me-1"></i>Sistem Informasi Manajemen Turnamen & Verifikasi Berkas Pemain
+                    </p>
+                </div>
+            </div>
 
             <!-- HEADER BAR -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
@@ -322,3 +355,4 @@
 </script>
 </body>
 </html>
+

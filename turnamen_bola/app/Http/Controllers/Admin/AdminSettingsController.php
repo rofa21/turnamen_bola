@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use ZipArchive;
 
 class AdminSettingsController extends Controller
 {
@@ -90,29 +91,83 @@ class AdminSettingsController extends Controller
     public function downloadBackup(): BinaryFileResponse
     {
         $dbPath = database_path('database.sqlite');
-
         if (! File::exists($dbPath)) {
             File::put($dbPath, '');
         }
 
-        $backupFileName = 'backup_turnamen_bola_'.date('Ymd_His').'.sqlite';
+        $zipFileName = 'backup_lengkap_turnamen_'.date('Ymd_His').'.zip';
+        $zipPath = storage_path("app/public/{$zipFileName}");
 
-        return response()->download($dbPath, $backupFileName, [
-            'Content-Type' => 'application/x-sqlite3',
-        ]);
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            // 1. Add SQLite Database file
+            $zip->addFile($dbPath, 'database.sqlite');
+
+            // 2. Add uploaded files from storage/app/public (documents, logos, etc.)
+            $publicStoragePath = storage_path('app/public');
+            if (File::exists($publicStoragePath)) {
+                $files = File::allFiles($publicStoragePath);
+                foreach ($files as $file) {
+                    $relativePath = 'storage/' . $file->getRelativePathname();
+                    // Avoid including backup zip files recursively
+                    if (! str_starts_with($file->getFilename(), 'backup_lengkap_')) {
+                        $zip->addFile($file->getRealPath(), $relativePath);
+                    }
+                }
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($zipPath, $zipFileName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend(true);
     }
 
     public function restoreBackup(Request $request)
     {
         $request->validate([
-            'backup_file' => ['required', 'file', 'max:51200'],
+            'backup_file' => ['required', 'file', 'max:102400'],
         ]);
 
         $file = $request->file('backup_file');
         $extension = strtolower($file->getClientOriginalExtension());
         $dbPath = database_path('database.sqlite');
+        $publicStoragePath = storage_path('app/public');
 
-        if (in_array($extension, ['sql', 'txt'])) {
+        if ($extension === 'zip') {
+            $zip = new ZipArchive;
+            if ($zip->open($file->getRealPath()) === true) {
+                // Extract database.sqlite
+                if ($zip->locateName('database.sqlite') !== false) {
+                    $zip->extractTo(storage_path('app/temp_backup'), 'database.sqlite');
+                    File::copy(storage_path('app/temp_backup/database.sqlite'), $dbPath);
+                    File::deleteDirectory(storage_path('app/temp_backup'));
+                }
+
+                // Extract storage files
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $entryName = $zip->getNameIndex($i);
+                    if (str_starts_with($entryName, 'storage/')) {
+                        $relativeSubPath = substr($entryName, strlen('storage/'));
+                        if (! empty($relativeSubPath)) {
+                            $targetPath = $publicStoragePath . '/' . $relativeSubPath;
+                            if (str_ends_with($entryName, '/')) {
+                                File::makeDirectory($targetPath, 0755, true, true);
+                            } else {
+                                File::makeDirectory(dirname($targetPath), 0755, true, true);
+                                copy("zip://{$file->getRealPath()}#{$entryName}", $targetPath);
+                            }
+                        }
+                    }
+                }
+                $zip->close();
+
+                return back()->with('success', 'Backup LENGKAP (Database SQLite + Berkas Dokumen/Foto) berhasil dipulihkan.');
+            } else {
+                return back()->withErrors(['backup_file' => 'Gagal membuka file cadangan ZIP.']);
+            }
+        } elseif (in_array($extension, ['sql', 'txt'])) {
             try {
                 $sqlContent = File::get($file->getRealPath());
                 DB::connection()->getPdo()->exec('PRAGMA foreign_keys = OFF;');
@@ -125,6 +180,6 @@ class AdminSettingsController extends Controller
             File::copy($file->getRealPath(), $dbPath);
         }
 
-        return back()->with('success', 'Basis data (database) berhasil di-import dari file cadangan.');
+        return back()->with('success', 'Basis data (database) berhasil dipulihkan dari file cadangan.');
     }
 }

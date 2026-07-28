@@ -1,76 +1,111 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Panitia Pusat Super Admin - Piala Disdikpora Kebumen</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+    <title>Login Panitia Pusat - Piala Disdikpora Grassroot Kebumen</title>
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+            border: 2px solid #334155;
+        }
+        .login-header {
+            background: #0f172a;
+            padding: 28px 20px 22px;
+            text-align: center;
+            color: #ffffff;
+            border-bottom: 3px solid #d4a017;
+        }
+        .login-header img {
+            width: 76px;
+            height: 76px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 3px solid #d4a017;
+            background: #ffffff;
+            padding: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 12px;
+        }
+        .btn-login {
+            background: #2563eb;
+            border: none;
+            color: white;
+            padding: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .btn-login:hover {
+            background: #1d4ed8;
+            color: white;
+        }
     </style>
 </head>
-<body class="h-full m-0 p-0 overflow-x-hidden bg-slate-900 text-white">
+<body>
 
-    <div class="min-h-screen flex items-center justify-center p-6">
-        <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8">
-            <div class="text-center mb-8">
-                <div class="inline-flex p-3 bg-blue-600/20 text-blue-400 rounded-xl mb-3">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
-                </div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">PANITIA PUSAT</h1>
-                <p class="text-xs text-slate-400 mt-1">Portal Super Admin Disdikpora Regional Kebumen</p>
-            </div>
-
-            @if(session('error'))
-                <div class="mb-4 text-sm text-red-400 bg-red-950/50 border border-red-800/50 p-3 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="mb-4 text-sm text-red-400 bg-red-950/50 border border-red-800/50 p-3 rounded-lg">
-                    <ul class="list-disc list-inside">
-                        @foreach($errors->all() as $err)
-                            <li>{{ $err }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form action="{{ route('admin.login') }}" method="POST" class="space-y-5">
-                @csrf
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Administrator</label>
-                    <input type="email" name="email" value="{{ old('email') }}" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-white transition duration-150" placeholder="admin@disdikpora.id" required autofocus>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Password</label>
-                    <input type="password" name="password" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-white transition duration-150" placeholder="••••••••" required>
-                </div>
-
-                <div class="pt-2">
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition duration-200 text-sm uppercase tracking-wider">
-                        Masuk ke Dashboard
-                    </button>
-                </div>
-            </form>
-
-            <div class="mt-6 text-center">
-                <a href="{{ route('operator.login') }}" class="text-xs text-slate-400 hover:text-blue-400 transition">
-                    &larr; Halaman Login Operator SSB
-                </a>
-            </div>
-        </div>
+<div class="login-card">
+    <div class="login-header">
+        <img src="/images/logo-turnamen.jpg" alt="Logo Panitia Pusat">
+        <h5 class="fw-bold text-warning mb-1">PANITIA PUSAT</h5>
+        <p class="text-slate-300 small mb-0">Portal Administrasi & Verifikasi Piala Disdikpora</p>
     </div>
+    
+    <div class="p-4">
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show border-0 small" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show border-0 small" role="alert">
+                <i class="bi bi-check-circle-fill me-1"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
+        <form action="{{ route('admin.login.submit') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label class="form-label fw-bold small text-secondary">Username / Email Administrator</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-shield-lock-fill text-primary"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Masukkan username admin" required value="{{ old('username') }}">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-secondary">Kata Sandi (Password)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-key-fill text-primary"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login w-100 shadow-sm">
+                <i class="bi bi-box-arrow-in-right me-1"></i> MASUK PANEL ADMIN
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

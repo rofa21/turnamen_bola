@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ekspor Data - Panitia Pusat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
         .sidebar { min-height: 100vh; background-color: #212529; color: #fff; z-index: 100; }
@@ -20,7 +20,7 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <i class="bi bi-trophy-fill text-warning fs-3"></i>
+                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
                 <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
             </div>
@@ -50,7 +50,7 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                 <div>
                     <h2 class="h3 fw-bold text-dark"><i class="bi bi-file-earmark-excel-fill text-success me-2"></i> Ekspor Data Sistem</h2>
-                    <p class="text-muted mb-0">Unduh data pemain, data tim, dan status verifikasi dalam format Excel (.csv) / PDF.</p>
+                    <p class="text-muted mb-0">Unduh data pemain, data tim, dan status verifikasi dalam format Excel / CSV rapi.</p>
                 </div>
             </div>
 
@@ -62,8 +62,8 @@
                                 <i class="bi bi-file-earmark-spreadsheet-fill"></i>
                             </div>
                             <div>
-                                <h5 class="fw-bold mb-1">Ekspor Data Pemain (Excel / CSV)</h5>
-                                <small class="text-muted">Format tabel spreadsheet lengkap untuk pengolahan data.</small>
+                                <h5 class="fw-bold mb-1">Ekspor Data Pemain (Excel Rapi)</h5>
+                                <small class="text-muted">Format spreadsheet terpisah kolom rapi dengan header warna.</small>
                             </div>
                         </div>
                         <form action="{{ route('admin.export.excel') }}" method="GET" class="mt-3">
@@ -76,7 +76,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label small fw-bold text-muted">Filter Tim SSB</label>
                                 <select name="team_id" class="form-select">
                                     <option value="">Semua SSB Peserta</option>
@@ -85,8 +85,15 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-success w-100 fw-bold">
-                                <i class="bi bi-download me-2"></i> Download File Excel (.csv)
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted">Format File Download</label>
+                                <select name="format" class="form-select fw-bold text-success">
+                                    <option value="xls" selected>Microsoft Excel (.xls) - Kolom Rapi & Terpisah (Rekomendasi)</option>
+                                    <option value="csv">CSV Semicolon (.csv)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">
+                                <i class="bi bi-download me-2"></i> Download File Excel Rapi (.xls)
                             </button>
                         </form>
                     </div>
@@ -104,8 +111,8 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <p class="text-muted small">Fitur cetak buku tim dan ID Card pemain sudah disesuaikan dengan layout resmi panitia pusat.</p>
-                            <a href="{{ route('admin.print.index') }}" class="btn btn-primary w-100 fw-bold">
+                            <p class="text-muted small">Fitur cetak buku tim dan ID Card pemain disesuaikan dengan layout resmi panitia pusat Disdikpora.</p>
+                            <a href="{{ route('admin.print.index') }}" class="btn btn-primary w-100 fw-bold shadow-sm">
                                 <i class="bi bi-arrow-right-circle me-2"></i> Buka Pusat Cetak Dokumen PDF
                             </a>
                         </div>
@@ -117,6 +124,6 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

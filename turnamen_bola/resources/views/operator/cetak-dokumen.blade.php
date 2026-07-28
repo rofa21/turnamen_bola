@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cetak Dokumen Tim - Operator SSB</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background-color: #1e293b; color: #fff; z-index: 100; }
-        .sidebar .nav-link { color: #94a3b8; margin-bottom: 5px; border-radius: 5px; transition: all 0.2s; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background-color: #2563eb; }
+        :root { --hijau: #1a5c2a; --hijau-tua: #0f3b1a; --emas: #d4a017; }
+        body { background-color: #f0f4f0; font-family: 'Segoe UI', sans-serif; }
+        .sidebar { min-height: 100vh; background: linear-gradient(180deg, var(--hijau-tua) 0%, var(--hijau) 100%); }
+        .sidebar-brand { background: rgba(0,0,0,0.3); border-bottom: 2px solid var(--emas); }
+        .sidebar .nav-link { color: #c8e6c9; margin-bottom: 3px; border-radius: 8px; transition: all 0.2s; padding: 8px 12px; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: linear-gradient(135deg, var(--emas) 0%, #b8870f 100%); }
 
         .player-card {
             width: 100%;
             max-width: 320px;
             height: 190px;
-            border: 2px solid #0d6efd;
+            border: 2px solid #1a5c2a;
             border-radius: 12px;
             background: linear-gradient(135deg, #ffffff 0%, #f1f4f9 100%);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -25,7 +27,7 @@
             margin: 0 auto;
         }
         .player-card-header {
-            background-color: #0d6efd;
+            background-color: #1a5c2a;
             color: white;
             padding: 6px 12px;
             font-size: 0.75rem;
@@ -45,17 +47,17 @@
 <div class="container-fluid">
     <div class="row">
         <!-- SIDEBAR OPERATOR SSB -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 no-print">
-            <div class="text-center py-3 border-bottom border-slate-700 mb-3">
-                <i class="bi bi-shield-shaded text-primary fs-3"></i>
-                <h6 class="text-white fw-bold mt-2 mb-0">{{ $operator->name }}</h6>
-                <small class="text-muted" style="font-size: 0.75rem;">Operator SSB</small>
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0 no-print">
+            <div class="sidebar-brand text-center p-3">
+                <img src="{{ $team?->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Tim" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
+                <div class="fw-bold text-warning" style="font-size:.85rem;">{{ $operator->name }}</div>
+                <small class="text-light" style="font-size:.72rem;">Operator SSB</small>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" href="{{ route('operator.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('operator.datapemain') }}"><i class="bi bi-people-fill me-2"></i> Data Pemain</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('operator.profile') }}"><i class="bi bi-building me-2"></i> Profil Tim SSB</a></li>
-                <li class="nav-item"><a class="nav-link active" href="{{ route('operator.cetak-dokumen') }}"><i class="bi bi-printer-fill me-2"></i> Cetak Manifes & ID Card</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{{ route('operator.print.index') }}"><i class="bi bi-printer-fill me-2"></i> Cetak Manifes & ID Card</a></li>
                 <hr class="border-slate-700 my-3">
                 <li class="nav-item">
                     <form action="{{ route('operator.logout') }}" method="POST">
@@ -79,7 +81,7 @@
             </div>
 
             <!-- PANEL KONTROL -->
-            <form action="{{ route('operator.cetak-dokumen') }}" method="GET" class="card border-0 shadow-sm p-4 mb-4 no-print">
+            <form action="{{ route('operator.print.index') }}" method="GET" class="card border-0 shadow-sm p-4 mb-4 no-print">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-6">
                         <label class="form-label fw-bold small">Pilih Format Dokumen</label>
@@ -208,6 +210,6 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

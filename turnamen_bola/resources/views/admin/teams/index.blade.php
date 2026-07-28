@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Tim & Verifikasi Pemain - Panitia Pusat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
         .sidebar { min-height: 100vh; background-color: #212529; color: #fff; z-index: 100; }
         .sidebar .nav-link { color: #adb5bd; margin-bottom: 5px; border-radius: 5px; transition: all 0.2s; }
         .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background-color: #0d6efd; }
+        .team-logo { width:44px;height:44px;object-fit:cover;border:2px solid #dee2e6;border-radius:50%; }
+        .team-logo-placeholder { width:44px;height:44px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center; }
+        .nav-pills .nav-link.active { background-color: #0d6efd; }
+        .nav-pills .nav-link { color: #212529; background: #e9ecef; margin-right: 6px; margin-bottom: 6px; }
     </style>
 </head>
 <body>
@@ -20,7 +24,7 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <i class="bi bi-trophy-fill text-warning fs-3"></i>
+                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
                 <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
             </div>
@@ -57,7 +61,7 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                 <div>
                     <h2 class="h3 fw-bold text-dark"><i class="bi bi-shield-shaded text-primary me-2"></i> Manajemen Tim & Verifikasi Pemain</h2>
-                    <p class="text-muted mb-0">Pilih baris Sekolah Sepak Bola (SSB) untuk mengelola squad pemain dan verifikasi berkas.</p>
+                    <p class="text-muted mb-0">Klik tombol Squad per SSB untuk memeriksa pemain & verifikasi berkas. Data dikelompokkan per kategori umur.</p>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <form action="{{ route('admin.verify.auto_all') }}" method="POST">
@@ -91,64 +95,42 @@
                 </div>
             </form>
 
-            <!-- TABEL DIREKTORI TIM -->
-            <div class="card border-0 shadow-sm p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-list-nested text-secondary me-2"></i> Daftar Entitas SSB Peserta</h5>
-                    <small class="text-muted">Klik "Kelola Squad & Verifikasi" untuk memeriksa pemain per tim</small>
+            <!-- TABS PER KATEGORI -->
+            @php
+                $allCats = $categories;
+            @endphp
+            <ul class="nav nav-pills mb-3" id="categoryTab">
+                <li class="nav-item">
+                    <button class="nav-link fw-bold active" data-bs-toggle="pill" data-bs-target="#tab-all-teams">
+                        <i class="bi bi-grid me-1"></i> Semua Tim ({{ $teams->total() }})
+                    </button>
+                </li>
+                @foreach($allCats as $cat)
+                    @php $catCount = $teams->filter(fn($t) => $t->age_category_id == $cat->id)->count(); @endphp
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#tab-cat-{{ $cat->id }}">
+                            <i class="bi bi-trophy me-1"></i> {{ $cat->name }} ({{ $catCount }} Tim)
+                        </button>
+                    </li>
+                @endforeach
+            </ul>
+
+            <div class="tab-content">
+                {{-- TAB SEMUA TIM --}}
+                <div class="tab-pane fade show active" id="tab-all-teams">
+                    @include('admin.teams.partials.team_table', ['teamGroup' => $teams, 'teams' => $teams])
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="text-center" width="5%">#</th>
-                                <th width="30%">Nama Sekolah Sepak Bola (SSB)</th>
-                                <th width="15%">Kategori</th>
-                                <th width="15%">Total Pemain</th>
-                                <th width="25%">Status Verifikasi Squad</th>
-                                <th class="text-center" width="10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($teams as $index => $team)
-                                @php
-                                    $summary = $team->verification_summary;
-                                @endphp
-                                <tr>
-                                    <td class="text-center">{{ $teams->firstItem() + $index }}</td>
-                                    <td>
-                                        <span class="fw-bold text-dark">{{ $team->name }}</span><br>
-                                        <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Kec. {{ $team->district ?? '-' }}</small>
-                                    </td>
-                                    <td><span class="badge bg-info text-dark">{{ $team->ageCategory?->name ?? 'KU-12' }}</span></td>
-                                    <td>{{ $summary['total'] }} Pemain</td>
-                                    <td>
-                                        <span class="badge bg-success">{{ $summary['approved'] }} Lolos</span>
-                                        @if($summary['pending'] > 0)
-                                            <span class="badge bg-warning text-dark">{{ $summary['pending'] }} Pending</span>
-                                        @endif
-                                        @if($summary['rejected'] > 0)
-                                            <span class="badge bg-danger">{{ $summary['rejected'] }} Revisi</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#modalDetailTim{{ $team->id }}">
-                                            <i class="bi bi-check2-square me-1"></i> Squad
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data tim SSB.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-3">
-                    {{ $teams->links() }}
-                </div>
+                {{-- TAB PER KATEGORI --}}
+                @foreach($allCats as $cat)
+                    @php $catTeams = $teams->filter(fn($t) => $t->age_category_id == $cat->id); @endphp
+                    <div class="tab-pane fade" id="tab-cat-{{ $cat->id }}">
+                        @include('admin.teams.partials.team_table', ['teamGroup' => $catTeams, 'teams' => $teams])
+                    </div>
+                @endforeach
             </div>
+
+            <div class="mt-3">{{ $teams->links() }}</div>
 
         </main>
     </div>
@@ -174,63 +156,36 @@
                         <span class="badge bg-dark">Kategori: {{ $team->ageCategory?->name }}</span>
                     </div>
 
-                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-people-fill text-primary me-1"></i> Daftar Pemain Dalam Squad:</h6>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="text-center" width="5%">No</th>
-                                    <th width="25%">Nama Pemain & No. Punggung</th>
-                                    <th width="25%">NIK & Tanggal Lahir (Kalkulasi Usia)</th>
-                                    <th width="15%">No. Registrasi</th>
-                                    <th width="15%">Status Verifikasi</th>
-                                    <th class="text-center" width="15%">Aksi Manual Panitia</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($team->players as $pIndex => $p)
-                                    @php
-                                        $ageValid = $p->checkAgeValidity();
-                                    @endphp
-                                    <tr>
-                                        <td class="text-center">{{ $pIndex + 1 }}</td>
-                                        <td>
-                                            <span class="fw-bold">{{ $p->name }}</span><br>
-                                            <small class="text-muted">No. {{ $p->jersey_number ?? '-' }} • {{ $p->position ?? 'Pemain' }}</small>
-                                        </td>
-                                        <td>
-                                            <small class="d-block text-muted">NIK: {{ $p->nik ?? '-' }}</small>
-                                            <small class="d-block">Tgl Lahir: <strong>{{ $p->birth_date ? $p->birth_date->format('d/m/Y') : '-' }}</strong> (Thn {{ $p->birth_year }})</small>
-                                            @if($ageValid)
-                                                <span class="badge bg-success" style="font-size: 0.65rem;"><i class="bi bi-check-circle"></i> Umur Sesuai {{ $team->ageCategory?->name }}</span>
-                                            @else
-                                                <span class="badge bg-danger" style="font-size: 0.65rem;"><i class="bi bi-exclamation-triangle"></i> Melebihi Usia</span>
-                                            @endif
-                                        </td>
-                                        <td><code>{{ $p->registration_number ?? '-' }}</code></td>
-                                        <td>{!! $p->verification?->status_badge ?? '<span class="badge bg-warning text-dark">Pending</span>' !!}</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-1">
-                                                <form action="{{ route('admin.verify.player', $p->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <input type="hidden" name="status" value="approved">
-                                                    <button type="submit" class="btn btn-sm btn-success py-1 px-2" title="Loloskan Verifikasi"><i class="bi bi-check-lg"></i> Lolos</button>
-                                                </form>
-                                                <form action="{{ route('admin.verify.player', $p->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <input type="hidden" name="status" value="rejected">
-                                                    <input type="hidden" name="notes" value="Dokumen permohonan perlu revisi.">
-                                                    <button type="submit" class="btn btn-sm btn-danger py-1 px-2" title="Tolak / Minta Revisi"><i class="bi bi-x-lg"></i> Tolak</button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="6" class="text-center py-3">Belum ada pemain diinput oleh operator SSB ini.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    @php
+                        $squadCats = $team->players->groupBy('age_category_id');
+                        $allCatsList = \App\Models\AgeCategory::whereIn('id', $squadCats->keys())->get()->keyBy('id');
+                    @endphp
+
+                    @if($allCatsList->count() > 1)
+                        {{-- Jika pemain ada di lebih dari 1 kategori, tampilkan tabs --}}
+                        <ul class="nav nav-pills mb-3 border-bottom pb-2" id="squadTabs{{ $team->id }}">
+                            @foreach($allCatsList as $cId => $cObj)
+                                <li class="nav-item">
+                                    <button class="nav-link fw-semibold {{ $loop->first ? 'active' : '' }}"
+                                        data-bs-toggle="pill"
+                                        data-bs-target="#squadTab{{ $team->id }}_{{ $cId }}">
+                                        <i class="bi bi-trophy me-1"></i> {{ $cObj->name }}
+                                        <span class="badge bg-white text-dark ms-1">{{ $squadCats[$cId]->count() }}</span>
+                                    </button>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <div class="tab-content">
+                            @foreach($allCatsList as $cId => $cObj)
+                                <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="squadTab{{ $team->id }}_{{ $cId }}">
+                                    @include('admin.teams.partials.player_row_table', ['players' => $squadCats[$cId], 'catLabel' => $cObj->name])
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        {{-- Hanya satu kategori --}}
+                        @include('admin.teams.partials.player_row_table', ['players' => $team->players, 'catLabel' => $team->ageCategory?->name])
+                    @endif
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
@@ -241,6 +196,7 @@
     </div>
 @endforeach
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

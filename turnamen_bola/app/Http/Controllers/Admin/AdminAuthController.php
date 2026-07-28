@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminAuthController extends Controller
 {
@@ -20,35 +21,40 @@ class AdminAuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'string'],
-            'password' => ['required'],
-        ]);
+        $loginInput = trim($request->input('username') ?? $request->input('email') ?? '');
+        $password = $request->input('password', '');
 
-        $loginInput = trim($credentials['email']);
+        if (empty($loginInput) || empty($password)) {
+            return back()->with('error', 'Username dan password wajib diisi.');
+        }
 
-        // Check if input is email or username "admin"
-        $user = User::where('email', $loginInput)
+        // Find user by username, email, or name
+        $user = User::where('username', $loginInput)
+            ->orWhere('email', $loginInput)
             ->orWhere('name', 'like', "%{$loginInput}%")
             ->first();
 
-        if (! $user && ($loginInput === 'admin' || $loginInput === 'superadmin')) {
+        // Fallback for default admin
+        if (! $user && in_array(strtolower($loginInput), ['admin', 'superadmin', 'admin@disdikpora.id'])) {
             $user = User::where('role', 'super_admin')->first();
         }
 
-        if ($user && Auth::attempt(['email' => $user->email, 'password' => $credentials['password']])) {
-            $request->session()->regenerate();
-            if (Auth::user()->isSuperAdmin()) {
-                return redirect()->route('admin.dashboard');
-            }
-            Auth::logout();
+        if ($user) {
+            if (Hash::check($password, $user->password) || $user->password === $password) {
+                if ($user->password === $password) {
+                    $user->password = Hash::make($password);
+                    $user->save();
+                }
+                Auth::login($user);
+                $request->session()->regenerate();
 
-            return back()->withErrors(['email' => 'Akun Anda tidak memiliki akses Super Admin.']);
+                if ($user->isSuperAdmin()) {
+                    return redirect()->route('admin.dashboard')->with('success', 'Selamat datang, Super Admin!');
+                }
+            }
         }
 
-        return back()->withErrors([
-            'email' => 'Email / Username atau password administrator salah.',
-        ])->onlyInput('email');
+        return back()->with('error', 'Username/Email atau Password administrator salah.');
     }
 
     public function logout(Request $request)
@@ -57,6 +63,6 @@ class AdminAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login');
+        return redirect()->route('admin.login')->with('success', 'Berhasil keluar sistem.');
     }
 }

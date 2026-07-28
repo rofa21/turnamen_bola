@@ -18,10 +18,10 @@ use App\Http\Middleware\EnsureOperator;
 use App\Http\Middleware\EnsureSuperAdmin;
 use Illuminate\Support\Facades\Route;
 
-// Redirect root URL to operator login
-Route::get('/', function () {
-    return redirect()->route('operator.login');
-});
+use App\Http\Controllers\PortalController;
+
+// Public Portal Landing Page for Disdikpora Grassroot Kebumen
+Route::get('/', [PortalController::class, 'index'])->name('portal');
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ Route::get('/', function () {
 */
 Route::prefix('operator')->name('operator.')->group(function () {
     Route::get('/login', [OperatorAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [OperatorAuthController::class, 'login']);
+    Route::post('/login', [OperatorAuthController::class, 'login'])->name('login.submit');
     Route::post('/logout', [OperatorAuthController::class, 'logout'])->name('logout');
 
     Route::middleware(EnsureOperator::class)->group(function () {
@@ -41,7 +41,6 @@ Route::prefix('operator')->name('operator.')->group(function () {
         Route::delete('/datapemain/{player}', [OperatorPlayerController::class, 'destroy'])->name('datapemain.destroy');
         Route::get('/profile', [OperatorTeamController::class, 'showProfile'])->name('profile');
         Route::post('/profile', [OperatorTeamController::class, 'updateProfile'])->name('profile.update');
-        Route::get('/cetak-dokumen', [OperatorPrintController::class, 'index'])->name('cetak-dokumen');
     });
 });
 
@@ -52,7 +51,7 @@ Route::prefix('operator')->name('operator.')->group(function () {
 */
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login']);
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
     Route::middleware(EnsureSuperAdmin::class)->group(function () {

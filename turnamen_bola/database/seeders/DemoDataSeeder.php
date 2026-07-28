@@ -6,10 +6,12 @@ use App\Models\AgeCategory;
 use App\Models\MatchSchedule;
 use App\Models\Operator;
 use App\Models\Player;
+use App\Models\PlayerDocument;
 use App\Models\PlayerVerification;
 use App\Models\Team;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DemoDataSeeder extends Seeder
 {
@@ -17,6 +19,9 @@ class DemoDataSeeder extends Seeder
     {
         $ku10 = AgeCategory::where('name', 'KU-10')->first();
         $ku12 = AgeCategory::where('name', 'KU-12')->first();
+
+        // Ensure dummy documents folder exists
+        Storage::disk('public')->makeDirectory('documents');
 
         // Demo Operators (SSB)
         $operatorsData = [
@@ -89,7 +94,7 @@ class DemoDataSeeder extends Seeder
 
             // Add players
             $pData = $playersData[$index] ?? [];
-            foreach ($pData as $pd) {
+            foreach ($pData as $pIdx => $pd) {
                 $player = Player::updateOrCreate(
                     ['nik' => $pd['nik']],
                     array_merge($pd, [
@@ -100,10 +105,26 @@ class DemoDataSeeder extends Seeder
                     ])
                 );
 
+                // Seed sample documents for players
+                // Every player has Foto, Akta, KK, plus ONE supporting doc (KIA, Ijazah, or NISN)
+                $docTypesSeeded = ['foto', 'akta', 'kk'];
+                if ($pIdx % 3 === 0) $docTypesSeeded[] = 'kia';
+                elseif ($pIdx % 3 === 1) $docTypesSeeded[] = 'ijazah';
+                else $docTypesSeeded[] = 'nisn';
+
+                foreach ($docTypesSeeded as $type) {
+                    PlayerDocument::updateOrCreate(
+                        ['player_id' => $player->id, 'type' => $type],
+                        [
+                            'original_name' => "dokumen_{$type}_{$player->id}.jpg",
+                            'file_path' => "documents/sample_{$type}.jpg",
+                        ]
+                    );
+                }
+
                 // Create verification records
                 $ageValid = $player->checkAgeValidity();
-                $verStatus = $ageValid ? 'auto_approved' : 'pending';
-                // Make some pending for demo
+                $verStatus = $ageValid ? 'approved' : 'pending';
                 if ($index === 1 && in_array($pd['name'], ['Rizky Ramadhan', 'Ahmad Dani'])) {
                     $verStatus = 'pending';
                 }
@@ -113,7 +134,7 @@ class DemoDataSeeder extends Seeder
 
                 PlayerVerification::updateOrCreate(
                     ['player_id' => $player->id],
-                    ['status' => $verStatus, 'age_valid' => $ageValid, 'notes' => $verStatus === 'rejected' ? 'Dokumen tidak lengkap' : null]
+                    ['status' => $verStatus, 'age_valid' => $ageValid, 'notes' => $verStatus === 'rejected' ? 'Dokumen perlu diperbarui' : 'Dokumen lengkap & terverifikasi']
                 );
             }
 

@@ -20,7 +20,7 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <i class="bi bi-trophy-fill text-warning fs-3"></i>
+                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
                 <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
             </div>
@@ -50,6 +50,13 @@
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong><i class="bi bi-exclamation-triangle-fill me-1"></i>Gagal menyimpan jadwal:</strong>
+                    <ul class="mb-0 mt-1">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
@@ -243,15 +250,16 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label fw-bold small">Kelompok Usia (Kategori)</label>
                             <select name="age_category_id" class="form-select" required>
+                                <option value="">-- Pilih Kategori --</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label fw-bold small">Babak / Fase Turnamen</label>
                             <select name="round" class="form-select" required>
                                 <option value="penyisihan">Babak Penyisihan Grup</option>
@@ -261,9 +269,13 @@
                                 <option value="perebutan_juara3">Perebutan Juara 3</option>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Nama Grup (Opsional)</label>
+                            <input type="text" name="group_name" class="form-control" placeholder="Contoh: Grup A, Grup B">
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Tim Pertama (Home)</label>
-                            <select name="home_team_id" class="form-select" required>
+                            <select name="home_team_id" class="form-select" required id="homeTeamSelect">
                                 <option value="">-- Pilih SSB Peserta --</option>
                                 @foreach($teams as $tm)
                                     <option value="{{ $tm->id }}">{{ $tm->name }} ({{ $tm->ageCategory?->name }})</option>
@@ -272,7 +284,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small">Tim Kedua (Away)</label>
-                            <select name="away_team_id" class="form-select" required>
+                            <select name="away_team_id" class="form-select" required id="awayTeamSelect">
                                 <option value="">-- Pilih SSB Peserta --</option>
                                 @foreach($teams as $tm)
                                     <option value="{{ $tm->id }}">{{ $tm->name }} ({{ $tm->ageCategory?->name }})</option>
@@ -305,3 +317,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

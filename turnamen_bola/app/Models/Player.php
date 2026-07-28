@@ -73,11 +73,15 @@ class Player extends Model
     {
         $category = AgeCategory::find($ageCategoryId);
         $prefix = strtoupper(str_replace(['-', ' '], '', $category->name ?? 'KU'));
-        $count = static::where('age_category_id', $ageCategoryId)
-            ->whereYear('created_at', $year)
-            ->count() + 1;
+        
+        $seq = static::where('age_category_id', $ageCategoryId)->count() + 1;
 
-        return "{$prefix}-{$year}-".str_pad($count, 3, '0', STR_PAD_LEFT);
+        do {
+            $regNumber = "{$prefix}-{$year}-".str_pad($seq, 3, '0', STR_PAD_LEFT);
+            $seq++;
+        } while (static::where('registration_number', $regNumber)->exists());
+
+        return $regNumber;
     }
 
     public function getFotoUrlAttribute(): ?string
