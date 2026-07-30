@@ -28,6 +28,15 @@ class OperatorPlayerController extends Controller
     public function index(Request $request)
     {
         $operator = $request->attributes->get('operator');
+        if (! $operator) {
+            $opId = $request->session()->get('operator_id');
+            $operator = $opId ? Operator::find($opId) : null;
+        }
+
+        if (! $operator) {
+            return redirect()->route('operator.login')->with('error', 'Sesi login telah habis. Silakan login kembali.');
+        }
+
         $team = Team::where('operator_id', $operator->id)->first();
         $categories = AgeCategory::all();
 
@@ -50,8 +59,9 @@ class OperatorPlayerController extends Controller
             return back()->with('error', 'Tim SSB belum terdaftar. Lengkapi Profil Tim SSB terlebih dahulu.');
         }
 
-        // Check if at least ONE supporting document (KIA / Ijazah / NISN / Raport) is uploaded
-        $hasSupportingDoc = $request->hasFile('file_kia') ||
+        // Check if at least ONE supporting document (file_supporting, KIA / Ijazah / NISN / Raport) is uploaded
+        $hasSupportingDoc = $request->hasFile('file_supporting') ||
+                            $request->hasFile('file_kia') ||
                             $request->hasFile('file_ijazah') ||
                             $request->hasFile('file_nisn') ||
                             $request->hasFile('file_raport');
@@ -61,20 +71,22 @@ class OperatorPlayerController extends Controller
         }
 
         $validated = $request->validate([
-            'name'           => ['required', 'string', 'max:255'],
-            'nik'            => ['required', 'string', 'max:20', 'unique:players,nik'],
-            'birth_date'     => ['required', 'date'],
-            'birth_place'    => ['nullable', 'string', 'max:100'],
-            'jersey_number'  => ['nullable', 'integer', 'min:1', 'max:99'],
-            'position'       => ['required', 'string', 'max:50'],
-            'age_category_id'=> ['required', 'exists:age_categories,id'],
-            'file_akta'      => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
-            'file_kk'        => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
-            'file_foto'      => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:3048'],
-            'file_kia'       => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
-            'file_ijazah'    => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
-            'file_nisn'      => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
-            'file_raport'    => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'name'                => ['required', 'string', 'max:255'],
+            'nik'                 => ['required', 'string', 'max:20', 'unique:players,nik'],
+            'birth_date'          => ['required', 'date'],
+            'birth_place'         => ['nullable', 'string', 'max:100'],
+            'jersey_number'       => ['nullable', 'integer', 'min:1', 'max:99'],
+            'position'            => ['required', 'string', 'max:50'],
+            'age_category_id'     => ['required', 'exists:age_categories,id'],
+            'supporting_doc_type' => ['nullable', 'string', 'in:kia,ijazah,nisn,raport'],
+            'file_supporting'     => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'file_akta'           => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'file_kk'             => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'file_foto'           => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:3048'],
+            'file_kia'            => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'file_ijazah'         => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'file_nisn'           => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
+            'file_raport'         => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:3048'],
         ]);
 
         $regNumber = Player::generateRegistrationNumber($validated['age_category_id'], date('Y'));
@@ -192,6 +204,25 @@ class OperatorPlayerController extends Controller
      */
     private function uploadDocuments(Request $request, int $playerId, bool $isNew): void
     {
+        // Handle combined single supporting document input
+        if ($request->hasFile('file_supporting')) {
+            $type = $request->input('supporting_doc_type', 'kia');
+            if (! in_array($type, ['kia', 'ijazah', 'nisn', 'raport'])) {
+                $type = 'kia';
+            }
+
+            $file = $request->file('file_supporting');
+            $path = $file->store("documents/{$playerId}", 'public');
+
+            PlayerDocument::updateOrCreate(
+                ['player_id' => $playerId, 'type' => $type],
+                [
+                    'file_path'     => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                ]
+            );
+        }
+
         foreach ($this->docTypes as $fileKey => $docType) {
             if ($request->hasFile($fileKey)) {
                 $file = $request->file($fileKey);

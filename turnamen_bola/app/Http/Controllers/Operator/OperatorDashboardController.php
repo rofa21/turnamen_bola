@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\MatchSchedule;
+use App\Models\Operator;
 use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -13,6 +14,15 @@ class OperatorDashboardController extends Controller
     public function index(Request $request)
     {
         $operator = $request->attributes->get('operator');
+        if (! $operator) {
+            $opId = $request->session()->get('operator_id');
+            $operator = $opId ? Operator::find($opId) : null;
+        }
+
+        if (! $operator) {
+            return redirect()->route('operator.login')->with('error', 'Sesi login telah habis. Silakan login kembali.');
+        }
+
         $team = Team::where('operator_id', $operator->id)->first();
 
         $playersCount = $team ? Player::where('team_id', $team->id)->count() : 0;

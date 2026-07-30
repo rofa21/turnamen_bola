@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Operator SSB - Piala Disdikpora Grassroot Kebumen</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
             --hijau-tua: #0f3b1a;
@@ -71,8 +71,8 @@
 
 <div class="login-card">
     <div class="login-header">
-        <img src="/images/logo-turnamen.jpg" alt="Logo Piala Disdikpora">
-        <h5 class="fw-bold text-warning mb-1">PIALA DISDIKPORA KEBUMEN</h5>
+        <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Piala Disdikpora" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:2px solid var(--emas);margin-bottom:10px;">
+        <h5 class="fw-bold text-warning mb-1 text-uppercase">{{ $activeEvent->name }}</h5>
         <p class="text-light small mb-0">Portal Login Operator Sekolah Sepak Bola (SSB)</p>
     </div>
     
@@ -119,6 +119,6 @@
     </div>
 </div>
 
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

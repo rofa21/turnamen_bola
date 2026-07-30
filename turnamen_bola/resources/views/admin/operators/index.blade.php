@@ -11,6 +11,7 @@
         .sidebar { min-height: 100vh; background-color: #212529; color: #fff; z-index: 100; }
         .sidebar .nav-link { color: #adb5bd; margin-bottom: 5px; border-radius: 5px; transition: all 0.2s; }
         .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background-color: #0d6efd; }
+        .pagination svg, nav svg, svg.w-5, svg.h-5 { width: 1.25rem !important; height: 1.25rem !important; display: inline-block; }
     </style>
 </head>
 <body>
@@ -20,9 +21,9 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
+                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
-                <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
+                <small class="text-muted text-uppercase" style="font-size: 0.68rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $activeEvent->name }}</small>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
@@ -52,6 +53,24 @@
                     <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Gagal menyimpan akun operator:</strong>
+                    <ul class="mb-0 mt-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var modal = new bootstrap.Modal(document.getElementById('modalTambahOperator'));
+                        modal.show();
+                    });
+                </script>
             @endif
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
@@ -137,7 +156,7 @@
                                     <td>{{ $operators->firstItem() + $index }}</td>
                                     <td>
                                         <span class="fw-bold text-dark">{{ $op->name }}</span><br>
-                                        <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Kec. {{ $op->district ?? '-' }}</small>
+                                        <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Kab. {{ $op->district ?? '-' }}</small>
                                     </td>
                                     <td>{{ $op->pic_name }} <br><small class="text-muted">{{ $op->phone ?? '-' }}</small></td>
                                     <td><code>{{ $op->username }}</code></td>
@@ -199,7 +218,7 @@
                             <input type="text" name="phone" class="form-control" value="{{ $op->phone }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Asal Kecamatan</label>
+                            <label class="form-label fw-bold small">Asal Kabupaten</label>
                             <input type="text" name="district" class="form-control" value="{{ $op->district }}">
                         </div>
                         <div class="mb-3">
@@ -241,23 +260,24 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Nama Resmi Sekolah Sepak Bola (SSB)</label>
-                        <input type="text" name="name" class="form-control" placeholder="Contoh: SSB Garuda Muda Sruweng" required>
+                        <input type="text" name="name" class="form-control" placeholder="Contoh: SSB Garuda Muda Sruweng" value="{{ old('name') }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Nama Penanggung Jawab / Operator</label>
-                        <input type="text" name="pic_name" class="form-control" placeholder="Nama lengkap operator" required>
+                        <input type="text" name="pic_name" class="form-control" placeholder="Nama lengkap operator" value="{{ old('pic_name') }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Nomor WhatsApp (Aktif)</label>
-                        <input type="text" name="phone" class="form-control" placeholder="08xxxxxxxxxx" required>
+                        <input type="text" name="phone" class="form-control" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">Kecamatan Asal</label>
-                        <input type="text" name="district" class="form-control" placeholder="Contoh: Sruweng">
+                        <label class="form-label fw-bold small">Asal Kabupaten</label>
+                        <input type="text" name="district" class="form-control" placeholder="Contoh: Kebumen" value="{{ old('district') }}">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold small">Username Login</label>
-                        <input type="text" name="username" class="form-control" placeholder="contoh: op_garudamuda" required>
+                        <label class="form-label fw-bold small">Username Login <small class="text-muted fw-normal">(harus unik, tidak boleh sama)</small></label>
+                        <input type="text" name="username" class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}" placeholder="contoh: op_garudamuda" value="{{ old('username') }}" required>
+                        @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Kata Sandi (Password)</label>
@@ -276,4 +296,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgeCategory;
 use App\Models\Event;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -11,7 +12,14 @@ class AdminPrintController extends Controller
 {
     public function index(Request $request)
     {
-        $teams = Team::with('ageCategory')->get();
+        $categories = AgeCategory::all();
+        
+        $teamsQuery = Team::with('ageCategory');
+        if ($request->filled('category_id')) {
+            $teamsQuery->where('age_category_id', $request->input('category_id'));
+        }
+        $teams = $teamsQuery->get();
+
         $selectedTeamId = $request->input('team_id', $teams->first()?->id);
         $documentType = $request->input('type', 'buku-tim');
 
@@ -33,10 +41,10 @@ class AdminPrintController extends Controller
             'date'        => $request->input('sign_date', date('d F Y')),
             'name_left'   => $request->input('sign_name_left', $team?->manager_name ?? 'Manajer SSB'),
             'title_left'  => $request->input('sign_title_left', 'Manajer SSB / Pendamping'),
-            'name_right'  => $request->input('sign_name_right', 'Drs. H. Slamet, M.Pd'),
-            'title_right' => $request->input('sign_title_right', 'Ketua Panitia Pusat Disdikpora'),
+            'name_right'  => $request->input('sign_name_right', 'Drs. H. Slamet'),
+            'title_right' => $request->input('sign_title_right', 'Ketua Panitia'),
         ];
 
-        return view('admin.print.index', compact('teams', 'team', 'selectedTeamId', 'documentType', 'event', 'signature'));
+        return view('admin.print.index', compact('categories', 'teams', 'team', 'selectedTeamId', 'documentType', 'event', 'signature'));
     }
 }

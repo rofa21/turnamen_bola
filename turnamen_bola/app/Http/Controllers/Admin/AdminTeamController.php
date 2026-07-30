@@ -13,7 +13,7 @@ class AdminTeamController extends Controller
     {
         $categories = AgeCategory::all();
 
-        $query = Team::with(['operator', 'ageCategory', 'players.verification']);
+        $query = Team::with(['operator', 'ageCategory', 'players.verification', 'players.documents']);
 
         if ($catId = $request->input('category_id')) {
             $query->where('age_category_id', $catId);

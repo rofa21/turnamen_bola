@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Panitia Pusat - Piala Disdikpora Grassroot Kebumen</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -62,9 +62,9 @@
 
 <div class="login-card">
     <div class="login-header">
-        <img src="/images/logo-turnamen.jpg" alt="Logo Panitia Pusat">
+        <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Panitia Pusat" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:2px solid var(--emas);margin-bottom:10px;">
         <h5 class="fw-bold text-warning mb-1">PANITIA PUSAT</h5>
-        <p class="text-slate-300 small mb-0">Portal Administrasi & Verifikasi Piala Disdikpora</p>
+        <p class="text-slate-300 small mb-0">{{ $activeEvent->name }}</p>
     </div>
     
     <div class="p-4">
@@ -106,6 +106,6 @@
     </div>
 </div>
 
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

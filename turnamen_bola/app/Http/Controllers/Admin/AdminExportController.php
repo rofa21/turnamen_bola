@@ -79,7 +79,7 @@ class AdminExportController extends Controller
             $columns = [
                 'No', 'No. Registrasi', 'Nama Pemain', 'NIK', 'Tempat Lahir',
                 'Tanggal Lahir', 'Tahun Lahir', 'Kategori Usia', 'SSB / Tim',
-                'Kecamatan SSB', 'Manajer SSB', 'Kontak Manajer', 'No. Punggung',
+                'Kabupaten SSB', 'Manajer SSB', 'Kontak Manajer', 'No. Punggung',
                 'Posisi', 'Dokumen Akta', 'Dokumen KK', 'Dokumen Foto',
                 'Dokumen KIA', 'Dokumen Ijazah', 'Dokumen NISN', 'Dokumen Raport',
                 'Status Verifikasi', 'Catatan Verifikasi'

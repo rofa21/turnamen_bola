@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Tim SSB - {{ $operator->name }}</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root { --hijau: #1a5c2a; --hijau-tua: #0f3b1a; --emas: #d4a017; }
         body { background-color: #f0f4f0; font-family: 'Segoe UI', sans-serif; }
@@ -93,15 +93,30 @@
             color: var(--hijau);
             font-weight: 500;
         }
+        .mobile-header { background: var(--hijau-tua); border-bottom: 2px solid var(--emas); }
     </style>
 </head>
 <body>
 
+<!-- MOBILE TOP NAVBAR -->
+<div class="mobile-header d-md-none p-2 text-white d-flex justify-content-between align-items-center sticky-top shadow-sm">
+    <div class="d-flex align-items-center gap-2">
+        <img src="{{ $team?->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo" class="rounded-circle border border-warning" style="width:36px;height:36px;object-fit:cover;">
+        <div>
+            <div class="fw-bold text-warning small">{{ $operator->name }}</div>
+            <small class="text-light" style="font-size:.65rem;">Operator SSB</small>
+        </div>
+    </div>
+    <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-list fs-5 me-1"></i> Menu
+    </button>
+</div>
+
 <div class="container-fluid">
     <div class="row">
         <!-- SIDEBAR -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-            <div class="sidebar-brand text-center p-3">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
+            <div class="sidebar-brand text-center p-3 d-none d-md-block">
                 <img src="{{ $team?->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Tim" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <div class="fw-bold text-warning" style="font-size:.85rem;">{{ $operator->name }}</div>
                 <small class="text-light" style="font-size:.72rem;">Operator SSB</small>
@@ -245,15 +260,15 @@
                                 {{-- NAMA SSB --}}
                                 <div class="col-md-6">
                                     <label class="form-label"><i class="bi bi-building me-1"></i> Nama Resmi SSB</label>
-                                    <input type="text" name="name" class="form-control" value="{{ old('name', $team->name ?? $operator->name) }}" required placeholder="Contoh: SSB Garuda Muda Kebumen">
+                                    <input type="text" name="name" class="form-control" value="{{ old('name', $team?->name ?? $operator->name) }}" required placeholder="Contoh: SSB Garuda Muda Kebumen">
                                     <div class="form-hint">📌 Tulis nama lengkap resmi Sekolah Sepak Bola Anda.</div>
                                 </div>
 
-                                {{-- KECAMATAN --}}
-                                <div class="col-md-6">
-                                    <label class="form-label"><i class="bi bi-geo-alt me-1"></i> Kecamatan Domisili</label>
-                                    <input type="text" name="district" class="form-control" value="{{ old('district', $team->district ?? $operator->district) }}" required placeholder="Contoh: Kebumen / Sruweng / Pejagoan">
-                                    <div class="form-hint">📌 Kecamatan tempat SSB berdomisili/berlatih.</div>
+                                {{-- KABUPATEN --}}
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label"><i class="bi bi-geo-alt me-1"></i> Kabupaten Domisili</label>
+                                    <input type="text" name="district" class="form-control" value="{{ old('district', $team?->district ?? '') }}" placeholder="Contoh: Kebumen">
+                                    <div class="form-hint">📌 Kabupaten/Kota tempat SSB berdomisili/berlatih.</div>
                                 </div>
 
                                 {{-- KATEGORI USIA --}}
@@ -261,7 +276,7 @@
                                     <label class="form-label"><i class="bi bi-trophy me-1"></i> Kategori Kelompok Usia</label>
                                     <select name="age_category_id" class="form-select" required>
                                         @foreach($categories as $cat)
-                                            <option value="{{ $cat->id }}" {{ ($team->age_category_id ?? '') == $cat->id ? 'selected' : '' }}>
+                                            <option value="{{ $cat->id }}" {{ ($team?->age_category_id ?? '') == $cat->id ? 'selected' : '' }}>
                                                 {{ $cat->name }} — Batas Kelahiran {{ $cat->max_birth_year }}
                                             </option>
                                         @endforeach
@@ -272,19 +287,19 @@
                                 {{-- NAMA MANAJER --}}
                                 <div class="col-md-6">
                                     <label class="form-label"><i class="bi bi-person me-1"></i> Nama Manajer / Penanggung Jawab</label>
-                                    <input type="text" name="manager_name" class="form-control" value="{{ old('manager_name', $team->manager_name ?? $operator->pic_name) }}" required placeholder="Nama lengkap manajer SSB">
+                                    <input type="text" name="manager_name" class="form-control" value="{{ old('manager_name', $team?->manager_name ?? $operator->pic_name) }}" required placeholder="Nama lengkap manajer SSB">
                                     <div class="form-hint">📌 Nama orang yang bertanggung jawab atas tim di turnamen ini.</div>
                                 </div>
 
                                 {{-- NOMOR WA --}}
                                 <div class="col-md-6">
                                     <label class="form-label"><i class="bi bi-whatsapp me-1"></i> Nomor WhatsApp Aktif</label>
-                                    <input type="text" name="manager_phone" class="form-control" value="{{ old('manager_phone', $team->manager_phone ?? $operator->phone) }}" required placeholder="Contoh: 08123456789">
+                                    <input type="text" name="manager_phone" class="form-control" value="{{ old('manager_phone', $team?->manager_phone ?? $operator->phone) }}" required placeholder="Contoh: 08123456789">
                                     <div class="form-hint">📌 Nomor WA aktif manajer, dihubungi panitia jika ada kendala.</div>
                                 </div>
 
                                 {{-- JERSEY COLOR (tersembunyi, isi default) --}}
-                                <input type="hidden" name="jersey_color" value="{{ $team->jersey_color ?? 'Belum Diisi' }}">
+                                <input type="hidden" name="jersey_color" value="{{ $team?->jersey_color ?? 'Belum Diisi' }}">
 
                             </div>
 
@@ -305,7 +320,7 @@
     </div>
 </div>
 
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @if($errors->any())
 <script>
     // Buka form jika ada error validasi

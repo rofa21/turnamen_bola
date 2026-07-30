@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengaturan Event & Master Data - Panitia Pusat</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
         .sidebar { min-height: 100vh; background-color: #212529; color: #fff; z-index: 100; }
@@ -20,9 +20,9 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
+                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
-                <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
+                <small class="text-muted text-uppercase" style="font-size: 0.68rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $activeEvent->name }}</small>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
@@ -99,6 +99,15 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold small">Upload Logo Resmi (PNG/JPG)</label>
+                                @if($event->logo_path)
+                                    <div class="mb-2 d-flex align-items-center gap-3 p-2 bg-light border rounded">
+                                        <img src="{{ asset('storage/'.$event->logo_path) }}" alt="Logo Saat Ini" style="height:56px;width:56px;object-fit:contain;border-radius:6px;background:#fff;border:1px solid #dee2e6;padding:4px;">
+                                        <div>
+                                            <small class="text-success fw-bold d-block"><i class="bi bi-check-circle-fill me-1"></i>Logo sudah tersimpan</small>
+                                            <small class="text-muted">Upload baru untuk mengganti logo saat ini.</small>
+                                        </div>
+                                    </div>
+                                @endif
                                 <input type="file" name="logo" class="form-control" accept="image/*">
                                 <div class="form-text">Format logo akan otomatis disesuaikan untuk kop surat dan ID card.</div>
                             </div>
@@ -303,7 +312,7 @@
     </div>
 @endforeach
 
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

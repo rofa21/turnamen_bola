@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Resmi - Piala Disdikpora Grassroot Regional Kebumen</title>
     <meta name="description" content="Portal Resmi Turnamen Sepak Bola Usia Dini Piala Disdikpora Grassroot Regional Kebumen. Informasi pendaftaran, jadwal pertandingan, dan akses sistem.">
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
             --hijau-tua: #0f3b1a;
@@ -115,9 +115,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark portal-nav sticky-top shadow-sm py-2" id="main-nav">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center portal-brand" href="{{ route('portal') }}">
-                <img src="/images/logo-turnamen.jpg" alt="Logo Disdikpora" class="me-2 shadow-sm">
+                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Disdikpora" class="me-2 shadow-sm" style="width:36px;height:36px;object-fit:cover;border-radius:50%;">
                 <div>
-                    <div class="fw-bold text-warning" style="font-size: 1.05rem; line-height: 1.1;">DISDIKPORA KEBUMEN</div>
+                    <div class="fw-bold text-warning text-uppercase" style="font-size: 1.05rem; line-height: 1.1;">{{ $activeEvent->organizer }}</div>
                     <small class="text-light opacity-75" style="font-size: 0.72rem;">Portal Resmi Turnamen Sepak Bola Grassroot</small>
                 </div>
             </a>
@@ -137,14 +137,14 @@
         <img src="/images/banner-turnamen.jpg" alt="Banner Header Disdikpora Grassroot Kebumen" class="hero-banner-img">
         <div class="hero-overlay">
             <div class="container text-white py-4">
-                <span class="badge px-3 py-2 mb-3 shadow-sm fw-bold text-dark" style="background-color: var(--emas); font-size: 0.85rem;">
-                    <i class="bi bi-trophy-fill me-1"></i> REGIONAL KABUPATEN KEBUMEN
+                <span class="badge px-3 py-2 mb-3 shadow-sm fw-bold text-dark text-uppercase" style="background-color: var(--emas); font-size: 0.85rem;">
+                    <i class="bi bi-trophy-fill me-1"></i> REGIONAL KABUPATEN {{ $activeEvent->location }}
                 </span>
                 <h1 class="display-5 fw-extrabold text-uppercase text-white mb-2" style="letter-spacing: -0.02em; text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
-                    PIALA DISDIKPORA GRASSROOT KEBUMEN
+                    {{ $activeEvent->name }}
                 </h1>
                 <p class="lead text-light opacity-90 mx-auto mb-4" style="max-width: 750px; font-weight: 400; font-size: 1.15rem;">
-                    Sistem Informasi & Portal Resmi Kejuaraan Sepak Bola Usia Dini Dinas Pendidikan, Kepemudaan, dan Olahraga Kabupaten Kebumen
+                    Sistem Informasi & Portal Resmi Kejuaraan Sepak Bola Usia Dini {{ $activeEvent->organizer }}
                 </p>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
                     <a href="#akses-portal" class="btn btn-warning btn-lg fw-bold px-4 py-2 shadow" style="background-color: var(--emas); border: none; color: #000;">
@@ -267,10 +267,10 @@
                     </span>
                     <h2 class="fw-bold text-dark mb-3">Membangun Generasi Emas Sepak Bola Kebumen</h2>
                     <p class="text-muted" style="line-height: 1.7;">
-                        <strong>Dinas Pendidikan, Kepemudaan, dan Olahraga (Disdikpora) Kabupaten Kebumen</strong> berkomitmen secara berkelanjutan untuk membina potensi atlet muda usia dini melalui ajang <em>Piala Disdikpora Grassroot Kebumen</em>.
+                        <strong>{{ $activeEvent->organizer }}</strong> berkomitmen secara berkelanjutan untuk membina potensi atlet muda usia dini melalui ajang <em>{{ $activeEvent->name }}</em>.
                     </p>
                     <p class="text-muted" style="line-height: 1.7;">
-                        Kejuaraan ini diikuti oleh Sekolah Sepak Bola (SSB) terdaftar dari 26 kecamatan di wilayah Kabupaten Kebumen, menjunjung tinggi nilai sportivitas, fair play, dan tertib administrasi sejak dini.
+                        Kejuaraan ini diikuti oleh Sekolah Sepak Bola (SSB) terdaftar di wilayah {{ $activeEvent->location }}, menjunjung tinggi nilai sportivitas, fair play, dan tertib administrasi sejak dini.
                     </p>
 
                     <div class="row g-3 mt-2">
@@ -278,14 +278,14 @@
                             <div class="p-3 bg-light rounded border">
                                 <i class="bi bi-geo-alt-fill text-danger fs-4 d-block mb-1"></i>
                                 <strong class="d-block text-dark small">Lokasi Pertandingan</strong>
-                                <span class="text-muted small">Stadion Chandradimuka, Kebumen</span>
+                                <span class="text-muted small">{{ $activeEvent->location }}</span>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="p-3 bg-light rounded border">
                                 <i class="bi bi-calendar-event-fill text-success fs-4 d-block mb-1"></i>
                                 <strong class="d-block text-dark small">Musim Kompetisi</strong>
-                                <span class="text-muted small">Tahun Ajaran 2026 / 2027</span>
+                                <span class="text-muted small">Musim {{ $activeEvent->season }}</span>
                             </div>
                         </div>
                     </div>
@@ -364,18 +364,18 @@
     <footer class="portal-footer py-4">
         <div class="container text-center">
             <div class="d-flex align-items-center justify-content-center mb-2">
-                <img src="/images/logo-turnamen.jpg" alt="Logo Turnamen" class="rounded-circle me-2" style="width:36px;height:36px;object-fit:cover;border:1px solid var(--emas);">
-                <span class="fw-bold text-warning" style="letter-spacing: .05em;">DISDIKPORA KABUPATEN KEBUMEN</span>
+                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Turnamen" class="rounded-circle me-2" style="width:36px;height:36px;object-fit:cover;border:1px solid var(--emas);">
+                <span class="fw-bold text-warning text-uppercase" style="letter-spacing: .05em;">{{ $activeEvent->organizer }}</span>
             </div>
             <p class="small text-light opacity-75 mb-2">
-                Dinas Pendidikan, Kepemudaan, dan Olahraga Kabupaten Kebumen • Jawa Tengah
+                Sistem Informasi Resmi Turnamen Sepak Bola Grassroot • {{ $activeEvent->location }}
             </p>
             <small class="text-muted" style="font-size: 0.72rem;">
-                © {{ date('Y') }} Piala Disdikpora Grassroot Regional Kebumen. All Rights Reserved.
+                © {{ date('Y') }} {{ $activeEvent->name }}. All Rights Reserved.
             </small>
         </div>
     </footer>
 
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -24,4 +24,12 @@ class Event extends Model
     {
         return static::where('is_active', true)->latest()->first();
     }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        if ($this->logo_path) {
+            return asset('storage/' . $this->logo_path);
+        }
+        return null;
+    }
 }

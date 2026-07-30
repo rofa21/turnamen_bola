@@ -31,7 +31,7 @@
                         </td>
                         <td>
                             <span class="fw-bold text-dark">{{ $team->name }}</span><br>
-                            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Kec. {{ $team->district ?? '-' }}</small><br>
+                            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Kab. {{ $team->district ?? '-' }}</small><br>
                             <small class="text-muted"><i class="bi bi-person me-1"></i>{{ $team->operator?->name ?? '-' }}</small>
                         </td>
                         <td><span class="badge bg-info text-dark">{{ $team->ageCategory?->name ?? '-' }}</span></td>

@@ -45,9 +45,9 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:52px;height:52px;object-fit:cover;">
+                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:52px;height:52px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-1 mb-0">PANITIA PUSAT</h6>
-                <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
+                <small class="text-muted text-uppercase" style="font-size: 0.68rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $activeEvent->name }}</small>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link active" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
@@ -355,4 +355,3 @@
 </script>
 </body>
 </html>
-

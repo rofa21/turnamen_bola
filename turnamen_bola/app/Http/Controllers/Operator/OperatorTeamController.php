@@ -12,6 +12,15 @@ class OperatorTeamController extends Controller
     public function showProfile(Request $request)
     {
         $operator = $request->attributes->get('operator');
+        if (! $operator) {
+            $opId = $request->session()->get('operator_id');
+            $operator = $opId ? \App\Models\Operator::find($opId) : null;
+        }
+
+        if (! $operator) {
+            return redirect()->route('operator.login')->with('error', 'Sesi login telah habis. Silakan login kembali.');
+        }
+
         $team = Team::where('operator_id', $operator->id)->with('ageCategory')->first();
         $categories = AgeCategory::all();
 

@@ -95,8 +95,13 @@ class AdminSettingsController extends Controller
             File::put($dbPath, '');
         }
 
+        $publicStoragePath = storage_path('app/public');
+        if (! File::exists($publicStoragePath)) {
+            File::makeDirectory($publicStoragePath, 0775, true, true);
+        }
+
         $zipFileName = 'backup_lengkap_turnamen_'.date('Ymd_His').'.zip';
-        $zipPath = storage_path("app/public/{$zipFileName}");
+        $zipPath = "{$publicStoragePath}/{$zipFileName}";
 
         $zip = new ZipArchive;
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {

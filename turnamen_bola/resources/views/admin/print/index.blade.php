@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pusat Cetak Dokumen - Panitia Pusat</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Arial, sans-serif; }
         .sidebar { min-height: 100vh; background-color: #212529; color: #fff; z-index: 100; }
@@ -57,9 +57,9 @@
         <!-- SIDEBAR SUPER ADMIN -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 no-print">
             <div class="text-center py-3 border-bottom border-secondary mb-3">
-                <img src="/images/logo-turnamen.jpg" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
+                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Panitia" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
                 <h6 class="text-white fw-bold mt-2 mb-0">PANITIA PUSAT</h6>
-                <small class="text-muted" style="font-size: 0.75rem;">Disdikpora Grassroot Kebumen</small>
+                <small class="text-muted text-uppercase" style="font-size: 0.68rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $activeEvent->name }}</small>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
@@ -168,19 +168,19 @@
                         <div id="previewBukuTim">
                             <!-- KOP SURAT / HEADER DOKUMEN -->
                             <div class="d-flex align-items-center border-bottom border-dark border-3 pb-3 mb-4">
-                                <img src="/images/logo-turnamen.jpg" alt="Logo Turnamen" class="me-3" style="width:75px;height:75px;object-fit:contain;">
+                                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Turnamen" class="me-3" style="width:75px;height:75px;object-fit:contain;">
                                 <div class="flex-grow-1 text-center">
-                                    <h5 class="fw-bold text-uppercase mb-0" style="letter-spacing:.05em; color:#1a5c2a;">DINAS PENDIDIKAN, KEPEMUDAAN, DAN OLAHRAGA</h5>
-                                    <h4 class="fw-bold text-uppercase text-dark mb-0" style="letter-spacing:.03em;">PANITIA PUSAT PIALA DISDIKPORA GRASSROOT KEBUMEN</h4>
-                                    <small class="text-muted">Sekretariat: Stadion Chandradimuka, Kab. Kebumen • Jawa Tengah</small>
+                                    <h5 class="fw-bold text-uppercase mb-0" style="letter-spacing:.05em; color:#1a5c2a;">{{ $activeEvent->organizer }}</h5>
+                                    <h4 class="fw-bold text-uppercase text-dark mb-0" style="letter-spacing:.03em;">PANITIA PUSAT {{ $activeEvent->name }}</h4>
+                                    <small class="text-muted">Sekretariat: {{ $activeEvent->location }} • Jawa Tengah</small>
                                 </div>
-                                <img src="/images/logo-turnamen.jpg" alt="Logo Kebumen" class="ms-3 opacity-0" style="width:75px;height:75px;">
+                                <img src="{{ $activeEvent->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Kebumen" class="ms-3 opacity-0" style="width:75px;height:75px;object-fit:contain;">
                             </div>
 
                             <div class="row mb-4 align-items-center bg-light p-3 rounded border">
                                 <div class="col-8">
                                     <h4 class="fw-bold text-dark mb-1"><i class="bi bi-shield-fill-check text-success me-2"></i> {{ strtoupper($team->name) }}</h4>
-                                    <p class="text-muted mb-0 small">Kategori Usia: <strong>{{ $team->ageCategory?->name }}</strong> | Kecamatan: <strong>{{ $team->district ?? 'Kebumen' }}</strong> | Manajer: <strong>{{ $team->manager_name ?? '-' }}</strong></p>
+                                    <p class="text-muted mb-0 small">Kategori Usia: <strong>{{ $team->ageCategory?->name }}</strong> | Kabupaten: <strong>{{ $team->district ?? 'Kebumen' }}</strong> | Manajer: <strong>{{ $team->manager_name ?? '-' }}</strong></p>
                                 </div>
                                 <div class="col-4 text-end">
                                     <span class="badge bg-success p-2 fs-6">SQUAD RESMI LOLOS VERIFIKASI ({{ $team->players->count() }} Pemain)</span>
@@ -315,6 +315,6 @@
     </div>
 </div>
 
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

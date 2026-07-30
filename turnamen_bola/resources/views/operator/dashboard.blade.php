@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Operator SSB - Piala Disdikpora Grassroot Kebumen</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
             --hijau: #1a5c2a;
@@ -86,18 +86,33 @@
             font-size: 1.6rem;
             margin: 0 auto 12px;
         }
+        .mobile-header { background: var(--hijau-tua); border-bottom: 2px solid var(--emas); }
     </style>
 </head>
 <body>
 
+<!-- MOBILE TOP NAVBAR -->
+<div class="mobile-header d-md-none p-2 text-white d-flex justify-content-between align-items-center sticky-top shadow-sm">
+    <div class="d-flex align-items-center gap-2">
+        <img src="{{ $team?->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo" class="rounded-circle border border-warning" style="width:36px;height:36px;object-fit:cover;">
+        <div>
+            <div class="fw-bold text-warning small">{{ $operator->name }}</div>
+            <small class="text-light" style="font-size:.65rem;">Operator SSB</small>
+        </div>
+    </div>
+    <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-list fs-5 me-1"></i> Menu
+    </button>
+</div>
+
 <div class="container-fluid">
     <div class="row">
         <!-- SIDEBAR -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-            <div class="sidebar-brand text-center p-3">
-                <img src="{{ $team?->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Tim" class="rounded-circle border border-warning border-2 mb-2" style="width:50px;height:50px;object-fit:cover;">
-                <div class="fw-bold text-warning" style="font-size:.85rem; line-height:1.2;">{{ $operator->name }}</div>
-                <small class="text-success-emphasis" style="font-size:.72rem;">Operator SSB • {{ $operator->district ?? 'Kebumen' }}</small>
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
+            <div class="sidebar-brand text-center p-3 d-none d-md-block">
+                <img src="{{ $team?->logo_url ?? '/images/logo-turnamen.jpg' }}" alt="Logo Tim" class="rounded-circle border border-warning border-2 mb-2" style="width:48px;height:48px;object-fit:cover;">
+                <div class="fw-bold text-warning" style="font-size:.85rem;">{{ $operator->name }}</div>
+                <small class="text-light" style="font-size:.72rem;">Operator SSB</small>
             </div>
             <ul class="nav flex-column p-2">
                 <li class="nav-item"><a class="nav-link active" href="{{ route('operator.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
@@ -133,7 +148,7 @@
                     </h4>
                     <p class="text-light mb-0 small">
                         <i class="bi bi-geo-alt me-1"></i>{{ $operator->district ?? 'Kebumen' }} &nbsp;•&nbsp;
-                        <i class="bi bi-calendar me-1"></i>{{ now()->translatedFormat('l, d F Y') }}
+                        <i class="bi bi-calendar me-1"></i>{{ now()->format('d/m/Y') }}
                     </p>
                 </div>
             </div>
@@ -280,6 +295,6 @@
     </div>
 </div>
 
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -32,19 +32,33 @@ class AdminOperatorController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+        $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
             'pic_name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:50'],
+            'phone'    => ['required', 'string', 'max:50'],
             'district' => ['nullable', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:100', 'unique:operators'],
             'password' => ['required', 'string', 'min:6'],
+        ], [
+            'name.required'     => 'Nama SSB wajib diisi.',
+            'pic_name.required' => 'Nama penanggung jawab wajib diisi.',
+            'phone.required'    => 'Nomor WhatsApp wajib diisi.',
+            'username.required' => 'Username login wajib diisi.',
+            'username.unique'   => 'Username tersebut sudah digunakan. Gunakan username yang lain.',
+            'username.max'      => 'Username maksimal 100 karakter.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min'      => 'Password minimal 6 karakter.',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
-        $validated['status'] = 'active';
-
-        Operator::create($validated);
+        $operator = Operator::create([
+            'name'     => $request->name,
+            'pic_name' => $request->pic_name,
+            'phone'    => $request->phone,
+            'district' => $request->district,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'status'   => 'active',
+        ]);
 
         return redirect()->route('admin.operators.index')->with('success', 'Akun Operator SSB berhasil ditambahkan.');
     }
